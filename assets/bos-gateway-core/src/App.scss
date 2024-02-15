@@ -1,0 +1,61 @@
+@import "bootstrap";
+
+.centered-spinner {
+  position: fixed; /* Use fixed positioning */
+  top: 50%; /* Center vertically */
+  left: 50%; /* Center horizontally */
+  transform: translate(-50%, -50%); /* Adjust the position to truly center the spinner */
+  z-index: 1050; /* Ensure it's above other content */
+}
+
+body {
+  overflow-y: scroll;
+}
+
+body,
+html {
+  -webkit-font-smoothing: antialiased;
+}
+
+.pointer {
+  cursor: pointer;
+}
+
+.btn-success,
+.btn-primary {
+  .text-muted {
+    color: #fff !important;
+  }
+}
+
+.outline-none {
+  outline: 0 !important;
+}
+
+a {
+  text-decoration: none;
+  &:hover {
+    text-decoration: underline;
+  }
+  &.btn {
+    text-decoration: none;
+  }
+}
+
+.sidebar-items {
+  & > div {
+    border-right: 1px solid #e5e5e5;
+    text-align: center;
+    min-height: 4rem;
+    max-height: 4rem;
+    display: flex;
+  }
+
+  & > div:not(.apps) {
+    min-width: 4rem;
+    align-items: center !important;
+    justify-content: center !important;
+  }
+}
+
+
