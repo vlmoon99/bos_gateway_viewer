@@ -46,14 +46,14 @@ class NearVM {
 
     //path for new generated keypair
     const derivationPathOfNewGeneratedAccount = DerivationPath(
-      purpose: '44',
-      coinType: '397',
-      accountNumber: '0',
-      change: '0',
-      address: '2',
+      purpose: "44'",
+      coinType: "397'",
+      accountNumber: "0'",
+      change: "0'",
+      address: "2'",
     );
 
-    // get private key in base64
+    // get private key in flutterchain format
     final privateKeyBase64 = await nearBlockChainService
         .getPrivateKeyFromSecretKeyFromNearApiJSFormat(
             privateKey.split(":").last);
@@ -80,9 +80,9 @@ class NearVM {
       derivationPath: derivationPathOfNewGeneratedAccount,
     );
 
-    // export private key from new generated keypair
+    // export near api js format private key from new generated keypair
     return await nearBlockChainService.exportPrivateKeyToTheNearApiJsFormat(
-        currentBlockchainData: nearBlockChainData,
-      );
+      currentBlockchainData: nearBlockChainData,
+    );
   }
 }

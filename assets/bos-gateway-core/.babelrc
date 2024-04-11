@@ -5,3 +5,6 @@
     "corejs": 3
   }], "@babel/preset-react"]
 }
+// {
+//   "presets": ["@babel/env", "@babel/preset-react"]
+// }

@@ -1,5 +1,8 @@
 library bos_gateway_viewer;
 
+import 'dart:async';
+import 'dart:convert';
+
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_inappwebview/flutter_inappwebview.dart';
@@ -30,6 +33,8 @@ class BosGatewayWidget extends StatefulWidget {
 
 class _BosGatewayWidgetState extends State<BosGatewayWidget> {
   bool loading = true;
+  bool pathWithProps = false;
+  String newProps = """'{}'""";
 
   WidgetSettings get widgetSettings => widget.widgetSettings;
   NearAuthCreds get nearAuthCreds => widget.nearAuthCreds;
@@ -44,10 +49,31 @@ class _BosGatewayWidgetState extends State<BosGatewayWidget> {
 
   Future<void> startViewer(InAppWebViewController webViewController) async {
     final String startView =
-        '''window.startViewer("${nearAuthCreds.network.name}", "${widgetSettings.widgetSrc}", "${widgetSettings.widgetProps}", "${nearAuthCreds.accountId}", "${nearAuthCreds.privateKey}");''';
+        '''window.startViewer("${nearAuthCreds.network.name}", "${widgetSettings.widgetSrc}", ${widgetSettings.widgetProps}, "${nearAuthCreds.accountId}", "${nearAuthCreds.privateKey}");''';
     return webViewController.evaluateJavascript(
       source: startView,
     );
+  }
+
+  Future<void> updateViewerWithNewProps({
+    required InAppWebViewController webViewController,
+    required String props,
+  }) {
+    final String startView =
+        '''window.startViewer("${nearAuthCreds.network.name}", "${widgetSettings.widgetSrc}", $props, "${nearAuthCreds.accountId}", "${nearAuthCreds.privateKey}");''';
+    return webViewController.evaluateJavascript(
+      source: startView,
+    );
+  }
+
+  String getWidgetPropsFormUrl(String url) {
+    final Uri uri = Uri.parse(url);
+    if (uri.queryParameters.isEmpty) {
+      return """'{}'""";
+    }
+    final Map<String, dynamic> params = uri.queryParameters;
+    final jsonString = jsonEncode(params);
+    return """'$jsonString'""";
   }
 
   @override
@@ -93,10 +119,34 @@ class _BosGatewayWidgetState extends State<BosGatewayWidget> {
                   },
                   onLoadStart: (controller, url) {},
                   onLoadStop: (controller, url) async {
-                    await startViewer(controller);
+                    if (!pathWithProps) {
+                      await startViewer(controller);
+                    } else {
+                      await updateViewerWithNewProps(
+                        webViewController: controller,
+                        props: newProps,
+                      );
+                    }
                     setState(() {
                       loading = false;
                     });
+                  },
+                  onUpdateVisitedHistory: (controller, url, androidIsReload) {
+                    final urlPath = url.toString();
+                    if (urlPath == WebViewConstants.widgetWebviewUrl) {
+                      return;
+                    } else if (urlPath.contains(widgetSettings.widgetSrc)) {
+                      final newProps = getWidgetPropsFormUrl(urlPath);
+                      setState(() {
+                        pathWithProps = true;
+                        this.newProps = newProps;
+                      });
+                      controller.loadUrl(
+                        urlRequest: URLRequest(
+                          url: WebUri(WebViewConstants.widgetWebviewUrl),
+                        ),
+                      );
+                    }
                   },
                   onConsoleMessage: (controller, consoleMessage) {
                     if (kDebugMode) {

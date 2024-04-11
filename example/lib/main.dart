@@ -87,10 +87,11 @@ class _HomeScreenState extends State<HomeScreen> {
                       ),
                       const SizedBox(height: 15),
                       TextFormField(
-                        initialValue: "{}",
+                        initialValue: '{}',
                         decoration: inputDecoration("Widget props"),
                         onSaved: (newValue) {
-                          widgetSettings["widgetProps"] = newValue!;
+                          final widgetPropsEncoded = """'$newValue'""";
+                          widgetSettings["widgetProps"] = widgetPropsEncoded;
                         },
                       ),
                       const SizedBox(height: 15),
@@ -234,7 +235,7 @@ class BosGatewatWidgetPreviewScreen extends StatelessWidget {
             widgetProps: bosGatewaySettings["widgetProps"],
           ),
         )
-        //  BosGatewayWidget(
+        // body: BosGatewayWidget(
         //   nearAuthCreds: NearAuthCreds(
         //     network: NearNetwork.mainnet,
         //     accountId: "bosmobile.near",
@@ -242,7 +243,7 @@ class BosGatewatWidgetPreviewScreen extends StatelessWidget {
         //         "ed25519:5tbP6myFeFztTaCk25E8XkXeMvmxeUL9T4cJppKhSnFJsPA9NYBzPhu9eNMCVC9KBhTkKk6s8bGyGG28dUczSJ7v",
         //   ),
         //   widgetSettings: WidgetSettings(
-        //     widgetSrc: "vlmoon.near/widget/ProfileEditor",
+        //     widgetSrc: "contribut3.near/widget/IpfsFilesUpload",
         //     widgetProps: "{}",
         //   ),
         // ),
