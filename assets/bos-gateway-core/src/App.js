@@ -1,22 +1,72 @@
-import * as nearAPI from "near-api-js";
-import { Widget, useNear, useInitNear, useAccount } from "near-social-vm";
-import { setupWalletSelector } from "@near-wallet-selector/core";
-import { setupMyNearWallet } from "@near-wallet-selector/my-near-wallet";
+// import * as nearAPI from "near-api-js";
+// import { Widget, useNear, useInitNear, useAccount } from "near-social-vm";
+// import { BrowserRouter as Router, Link, Route, Switch } from "react-router-dom";
+// import { setupWalletSelector } from "@near-wallet-selector/core";
+// import { setupMyNearWallet } from "@near-wallet-selector/my-near-wallet";
+// import React, { useCallback, useEffect, useState } from "react";
+// import ls from "local-storage";
+// import "./App.scss";
+// import ViewPage from "./ViewPage";
+// import { isValidAttribute } from "dompurify";
+
 import React, { useCallback, useEffect, useState } from "react";
+import * as nearAPI from "near-api-js";
 import ls from "local-storage";
 import "./App.scss";
+import { BrowserRouter as Router, Link, Route, Switch } from "react-router-dom";
+import ViewPage from "./ViewPage";
+import { setupWalletSelector } from "@near-wallet-selector/core";
+import { setupMyNearWallet } from "@near-wallet-selector/my-near-wallet";
+import {
+  Widget,
+  useAccount,
+  useInitNear,
+  useNear,
+  utils,
+  EthersProviderContext,
+} from "near-social-vm";
+import { isValidAttribute } from "dompurify";
 
 const WalletSelectorAuthKey = "near_app_wallet_auth_key";
+
+const getNetworkPreset = (networkId) => {
+  switch (networkId) {
+    case "mainnet":
+      return {
+        networkId,
+        nodeUrl: "https://rpc.fastnear.com",
+        helperUrl: "https://helper.mainnet.near.org",
+        explorerUrl: "https://nearblocks.io",
+        indexerUrl: "https://api.kitwallet.app",
+      };
+    case "testnet":
+      return {
+        networkId,
+        nodeUrl: "https://rpc.testnet.near.org",
+        helperUrl: "https://helper.testnet.near.org",
+        explorerUrl: "https://testnet.nearblocks.io",
+        indexerUrl: "https://testnet-api.kitwallet.app",
+      };
+    default:
+      throw Error(`Failed to find config for: '${networkId}'`);
+  }
+};
 
 function App(props) {
   const network = props.network;
   const widgetSrc = props.widgetSrc;
-  const widgetProps = props.widgetProps;
+  const widgetProps = JSON.parse(props.widgetProps);
   const PRIVATE_KEY = props.privateKey;
   const accountId = props.accountId;
 
   console.log("NEAR objects will be initialized");
-  console.log(network, widgetSrc, JSON.stringify(widgetProps), accountId, PRIVATE_KEY);
+  console.log(
+    network,
+    widgetSrc,
+    JSON.stringify(widgetProps),
+    accountId,
+    PRIVATE_KEY
+  );
 
   const anonymousWidget = PRIVATE_KEY === "" || accountId === "";
 
@@ -33,6 +83,9 @@ function App(props) {
       methodNames: [],
     },
   };
+
+  const walletSelectorNetwork = getNetworkPreset(network);
+
   useEffect(() => {
     const myKeyStore = new nearAPI.keyStores.BrowserLocalStorageKeyStore();
     async function setData() {
@@ -48,20 +101,37 @@ function App(props) {
       });
     }
     if (!anonymousWidget) {
-      setData(); 
+      setData();
     }
 
-    initNear &&
-      initNear({
-        networkId: network,
-        selector: setupWalletSelector({
-          network: network,
-          modules: [setupMyNearWallet()],
-        }),
-        config: {
-          defaultFinality: undefined,
+    const config = {
+      networkId: network,
+      selector: setupWalletSelector({
+        network: walletSelectorNetwork,
+        modules: [setupMyNearWallet()],
+      }),
+      customElements: {
+        Link: (props) => {
+          if (!props.to && props.href) {
+            props.to = props.href;
+            delete props.href;
+          }
+          if (props.to) {
+            props.to =
+              typeof props.to === "string" &&
+              isValidAttribute("a", "href", props.to)
+                ? props.to
+                : "about:blank";
+          }
+          return <Link {...props} />;
         },
-      });
+      },
+      config: {
+        defaultFinality: undefined,
+      },
+    };
+
+    initNear && initNear(config);
 
     setNearInitialized(true);
   }, [initNear]);
@@ -89,10 +159,14 @@ function App(props) {
       </div>
     );
   } else {
+    const widgetSettings = {
+      widgetSrc,
+      widgetProps,
+    };
     return (
-      <div>
-        <Widget key={widgetSrc} src={widgetSrc} props={widgetProps} />
-      </div>
+      <Router>
+        <ViewPage {...widgetSettings} />
+      </Router>
     );
   }
 }
