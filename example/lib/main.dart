@@ -161,27 +161,28 @@ class _HomeScreenState extends State<HomeScreen> {
                       if (widgetSettings["privateKey"] != "" &&
                           widgetSettings["accountId"] != "" &&
                           widgetSettings["allowance"] != "") {
-                        final NearVM nearVM = NearVM();
-                        setState(() {
-                          generateFucntionalKeyLoading = true;
-                        });
-                        final functionalPrivateKey =
-                            await nearVM.getFunctionalKeyForNearSocial(
-                          network:
-                              (widgetSettings["network"] as NearNetwork).name,
-                          accountId: widgetSettings["accountId"],
-                          privateKey: widgetSettings["privateKey"],
-                          allowance: widgetSettings["allowance"],
-                        );
+                        ///temporary disabled
+                        // final NearVM nearVM = NearVM();
+                        // setState(() {
+                        //   generateFucntionalKeyLoading = true;
+                        // });
+                        // final functionalPrivateKey =
+                        //     await nearVM.getFunctionalKeyForNearSocial(
+                        //   network:
+                        //       (widgetSettings["network"] as NearNetwork).name,
+                        //   accountId: widgetSettings["accountId"],
+                        //   privateKey: widgetSettings["privateKey"],
+                        //   allowance: widgetSettings["allowance"],
+                        // );
 
-                        log("privateKey: ${widgetSettings["privateKey"]}");
-                        log("functionalPrivateKey: $functionalPrivateKey");
+                        // log("privateKey: ${widgetSettings["privateKey"]}");
+                        // log("functionalPrivateKey: $functionalPrivateKey");
 
-                        widgetSettings["privateKey"] = functionalPrivateKey;
+                        // widgetSettings["privateKey"] = functionalPrivateKey;
 
-                        setState(() {
-                          generateFucntionalKeyLoading = false;
-                        });
+                        // setState(() {
+                        //   generateFucntionalKeyLoading = false;
+                        // });
                       }
                       Navigator.of(context).pushNamed(
                         BosGatewatWidgetPreviewScreen.routeName,
