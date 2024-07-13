@@ -128,6 +128,7 @@ function App(props) {
       },
       config: {
         defaultFinality: undefined,
+        nodeUrl: walletSelectorNetwork.nodeUrl,
       },
     };
 

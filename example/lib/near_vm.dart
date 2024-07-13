@@ -24,8 +24,9 @@ class NearVM {
         nearRpcClient: NearRpcClient(
           networkClient: NearNetworkClient(
             dio: Dio(),
-            baseUrl: NearBlockChainNetworkUrls.listOfUrls
-                .elementAt(network == "testnet" ? 0 : 1),
+            baseUrl: network == "testnet"
+                ? NearBlockChainNetworkUrls.listOfUrls.first
+                : "https://rpc.fastnear.com/",
           ),
         ),
       ),
