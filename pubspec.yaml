@@ -1,16 +1,22 @@
 name: bos_gateway_viewer
 description: "viewer for bos-gateway-core"
-version: 0.0.3
+version: 0.0.4
 homepage:
 
 environment:
   sdk: '>=3.2.3 <4.0.0'
-  flutter: ">=1.17.0"
 
 dependencies:
   flutter:
     sdk: flutter
   flutter_inappwebview: ^6.0.0
+
+dependency_overrides:
+  flutter_inappwebview_web:
+    git:
+      url: https://github.com/p-mazhnik/flutter_inappwebview.git
+      path: flutter_inappwebview_web
+      ref: 295ff82
 
 dev_dependencies:
   flutter_test:

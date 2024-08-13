@@ -1,12 +1,8 @@
-import 'dart:developer';
 import 'package:bos_gateway_viewer/bos_gateway_viewer.dart';
-import 'package:example/near_vm.dart';
 import 'package:flutter/material.dart';
-import 'package:flutterchain/flutterchain_lib/services/core/lib_initialization_service.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
-  await initFlutterChainLib();
   runApp(const MyApp());
 }
 
@@ -160,30 +156,7 @@ class _HomeScreenState extends State<HomeScreen> {
                       _formKey.currentState!.save();
                       if (widgetSettings["privateKey"] != "" &&
                           widgetSettings["accountId"] != "" &&
-                          widgetSettings["allowance"] != "") {
-                        ///temporary disabled
-                        // final NearVM nearVM = NearVM();
-                        // setState(() {
-                        //   generateFucntionalKeyLoading = true;
-                        // });
-                        // final functionalPrivateKey =
-                        //     await nearVM.getFunctionalKeyForNearSocial(
-                        //   network:
-                        //       (widgetSettings["network"] as NearNetwork).name,
-                        //   accountId: widgetSettings["accountId"],
-                        //   privateKey: widgetSettings["privateKey"],
-                        //   allowance: widgetSettings["allowance"],
-                        // );
-
-                        // log("privateKey: ${widgetSettings["privateKey"]}");
-                        // log("functionalPrivateKey: $functionalPrivateKey");
-
-                        // widgetSettings["privateKey"] = functionalPrivateKey;
-
-                        // setState(() {
-                        //   generateFucntionalKeyLoading = false;
-                        // });
-                      }
+                          widgetSettings["allowance"] != "") {}
                       Navigator.of(context).pushNamed(
                         BosGatewatWidgetPreviewScreen.routeName,
                         arguments: widgetSettings,
@@ -244,7 +217,7 @@ class BosGatewatWidgetPreviewScreen extends StatelessWidget {
         //         "ed25519:5tbP6myFeFztTaCk25E8XkXeMvmxeUL9T4cJppKhSnFJsPA9NYBzPhu9eNMCVC9KBhTkKk6s8bGyGG28dUczSJ7v",
         //   ),
         //   widgetSettings: WidgetSettings(
-        //     widgetSrc: "contribut3.near/widget/IpfsFilesUpload",
+        //     widgetSrc: "devgovgigs.near/widget/Post",
         //     widgetProps: "{}",
         //   ),
         // ),
