@@ -218,6 +218,11 @@ class _BosGatewayWidgetState extends State<BosGatewayWidget> {
               }
             },
             onUpdateVisitedHistory: (controller, url, androidIsReload) {},
+            onReceivedError: (controller, request, error) {
+              if (error.type == WebResourceErrorType.CANNOT_CONNECT_TO_HOST) {
+                controller.reload();
+              }
+            },
             onConsoleMessage: (controller, consoleMessage) {
               if (kDebugMode) {
                 print(consoleMessage);
