@@ -217,8 +217,8 @@ class _BosGatewayWidgetState extends State<BosGatewayWidget> {
               }
             },
             onUpdateVisitedHistory: (controller, url, androidIsReload) {},
-            onReceivedError: (controller, request, error) {
-              log("error from webview: ${error.toString()}");
+            onLoadError: (controller, url, code, message) {
+              controller.reload();
             },
             onConsoleMessage: (controller, consoleMessage) {
               if (kDebugMode) {
