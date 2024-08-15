@@ -33,7 +33,6 @@ class BosGatewayWidget extends StatefulWidget {
 }
 
 class _BosGatewayWidgetState extends State<BosGatewayWidget> {
-  bool loading = true;
   late String newProps = widgetSettings.widgetProps;
   late String newPath = widgetSettings.widgetSrc;
 
@@ -219,9 +218,7 @@ class _BosGatewayWidgetState extends State<BosGatewayWidget> {
             },
             onUpdateVisitedHistory: (controller, url, androidIsReload) {},
             onReceivedError: (controller, request, error) {
-              if (error.type == WebResourceErrorType.CANNOT_CONNECT_TO_HOST) {
-                controller.reload();
-              }
+              log("error from webview: ${error.toString()}");
             },
             onConsoleMessage: (controller, consoleMessage) {
               if (kDebugMode) {
