@@ -22,11 +22,16 @@ final InAppLocalhostServer _localhostServer = InAppLocalhostServer(
 );
 
 class BosGatewayWidget extends StatefulWidget {
-  const BosGatewayWidget(
-      {super.key, required this.widgetSettings, required this.nearAuthCreds});
+  const BosGatewayWidget({
+    super.key,
+    required this.widgetSettings,
+    required this.nearAuthCreds,
+    this.onError,
+  });
 
   final WidgetSettings widgetSettings;
   final NearAuthCreds nearAuthCreds;
+  final Function(String errorMessage)? onError;
 
   @override
   State<BosGatewayWidget> createState() => _BosGatewayWidgetState();
@@ -221,6 +226,9 @@ class _BosGatewayWidgetState extends State<BosGatewayWidget> {
               controller.reload();
             },
             onConsoleMessage: (controller, consoleMessage) {
+              if (consoleMessage.messageLevel == ConsoleMessageLevel.ERROR) {
+                widget.onError?.call(consoleMessage.message);
+              }
               if (kDebugMode) {
                 print(consoleMessage);
               }

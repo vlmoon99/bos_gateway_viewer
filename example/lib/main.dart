@@ -208,6 +208,13 @@ class BosGatewatWidgetPreviewScreen extends StatelessWidget {
             widgetSrc: bosGatewaySettings["widgetSrc"],
             widgetProps: bosGatewaySettings["widgetProps"],
           ),
+          onError: (errorMessage) {
+            ScaffoldMessenger.of(context).showSnackBar(
+              SnackBar(
+                content: Text(errorMessage),
+              ),
+            );
+          },
         )
         // body: BosGatewayWidget(
         //   nearAuthCreds: NearAuthCreds(
