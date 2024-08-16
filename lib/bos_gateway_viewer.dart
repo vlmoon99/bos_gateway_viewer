@@ -2,6 +2,7 @@ library bos_gateway_viewer;
 
 import 'dart:async';
 import 'dart:convert';
+import 'dart:developer';
 
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
@@ -21,20 +22,24 @@ final InAppLocalhostServer _localhostServer = InAppLocalhostServer(
 );
 
 class BosGatewayWidget extends StatefulWidget {
-  const BosGatewayWidget(
-      {super.key, required this.widgetSettings, required this.nearAuthCreds});
+  const BosGatewayWidget({
+    super.key,
+    required this.widgetSettings,
+    required this.nearAuthCreds,
+    this.onError,
+  });
 
   final WidgetSettings widgetSettings;
   final NearAuthCreds nearAuthCreds;
+  final Function(String errorMessage)? onError;
 
   @override
   State<BosGatewayWidget> createState() => _BosGatewayWidgetState();
 }
 
 class _BosGatewayWidgetState extends State<BosGatewayWidget> {
-  bool loading = true;
-  String newProps = "";
-  String newPath = "";
+  late String newProps = widgetSettings.widgetProps;
+  late String newPath = widgetSettings.widgetSrc;
 
   WidgetSettings get widgetSettings => widget.widgetSettings;
   NearAuthCreds get nearAuthCreds => widget.nearAuthCreds;
@@ -69,11 +74,17 @@ class _BosGatewayWidgetState extends State<BosGatewayWidget> {
 
   String getWidgetPropsFromUrl(String url) {
     final Uri uri = Uri.parse(url);
-    if (uri.queryParameters.isEmpty) {
-      return """'{}'""";
+    late String jsonString;
+    if (uri.queryParameters.isNotEmpty) {
+      final Map<String, dynamic> params = uri.queryParameters;
+      jsonString = jsonEncode(params);
+    } else if (url.lastIndexOf('?') != -1) {
+      final subStr = url.substring(url.lastIndexOf('?') + 1);
+      final Map<String, dynamic> params = Uri.splitQueryString(subStr);
+      jsonString = jsonEncode(params);
+    } else {
+      jsonString = '{}';
     }
-    final Map<String, dynamic> params = uri.queryParameters;
-    final jsonString = jsonEncode(params);
     return """'$jsonString'""";
   }
 
@@ -84,18 +95,25 @@ class _BosGatewayWidgetState extends State<BosGatewayWidget> {
     // Split the path into segments
     List<String> segments = uri.pathSegments;
 
-    // Reconstruct the path by joining the relevant segments
-    String path =
-        segments.takeWhile((segment) => segment != 'widget').join('/') +
-            '/widget';
-
-    // Append the rest of the path after 'widget'
+    // Find the index of 'widget'
     int widgetIndex = segments.indexOf('widget');
-    if (widgetIndex != -1 && widgetIndex + 1 < segments.length) {
-      path += '/' + segments.sublist(widgetIndex + 1).join('/');
-    }
 
-    return path;
+    // If 'widget' is found, reconstruct the path including the segment before and after 'widget'
+    if (widgetIndex != -1) {
+      String path = segments.sublist(widgetIndex - 1).join('/');
+      return path;
+    } else {
+      String path = uri.fragment;
+      if (path.lastIndexOf('?') != -1) {
+        path = path.substring(1, path.lastIndexOf('?'));
+        return path;
+      } else {
+        path = path.substring(
+          1,
+        );
+        return path;
+      }
+    }
   }
 
   @override
@@ -117,71 +135,100 @@ class _BosGatewayWidgetState extends State<BosGatewayWidget> {
 
   @override
   Widget build(BuildContext context) {
-    return SafeArea(
-      child: Stack(
-        children: [
-          InAppWebView(
-            initialSettings: settings,
-            initialFile:
-                kIsWeb ? WebViewConstants.widgetAssetsPath : null,
-            initialUrlRequest: !kIsWeb
-                ? URLRequest(
-                    url: WebUri(WebViewConstants.widgetWebviewUrl),
-                  )
-                : null,
-            onWebViewCreated: (controller) {},
-            onPermissionRequest: (controller, request) async {
-              return PermissionResponse(
-                resources: request.resources,
-                action: PermissionResponseAction.GRANT,
-              );
-            },
-            onLoadStart: (controller, url) async {},
-            onLoadStop: (controller, url) async {
-              if (loading) {
-                await startViewer(controller);
-                setState(() {
-                  loading = false;
-                });
-              } else {
-                updateViewerWithNewParams(
-                  webViewController: controller,
-                  path: newPath,
-                  props: newProps,
-                );
-              }
-            },
-            onUpdateVisitedHistory: (controller, url, androidIsReload) {
-              final urlPath = url.toString();
-              if (urlPath == WebViewConstants.widgetWebviewUrl) {
-                return;
-              }
-              if (urlPath.contains("/widget/")) {
-                final newPath = extractPath(urlPath);
-                final newProps = getWidgetPropsFromUrl(urlPath);
-                setState(() {
-                  this.newProps = newProps;
-                  this.newPath = newPath;
-                });
-                controller.loadUrl(
-                  urlRequest: URLRequest(
-                    url: WebUri(WebViewConstants.widgetWebviewUrl),
-                  ),
-                );
-              }
-            },
-            onConsoleMessage: (controller, consoleMessage) {
-              if (kDebugMode) {
-                print(consoleMessage);
-              }
-            },
-          ),
-          if (loading)
-            const Center(
-              child: CircularProgressIndicator(),
-            ),
-        ],
-      ),
+    return InAppWebView(
+      initialSettings: settings,
+      initialFile: kIsWeb ? WebViewConstants.widgetAssetsPath : null,
+      initialUrlRequest: !kIsWeb
+          ? URLRequest(
+              url: WebUri(WebViewConstants.widgetWebviewUrl),
+            )
+          : null,
+      onWebViewCreated: (controller) {},
+      onPermissionRequest: (controller, request) async {
+        return PermissionResponse(
+          resources: request.resources,
+          action: PermissionResponseAction.GRANT,
+        );
+      },
+      onLoadStart: (controller, url) async {
+        log("onLoadStart: ${url.toString()}");
+      },
+      onLoadStop: (controller, url) async {
+        final urlPath = url.toString();
+        if (kIsWeb) {
+          if (urlPath.endsWith(WebViewConstants.widgetAssetsPath)) {
+            await updateViewerWithNewParams(
+              webViewController: controller,
+              path: newPath,
+              props: newProps,
+            );
+            return;
+          }
+          if (urlPath.contains("/widget/")) {
+            final newPath = extractPath(urlPath);
+            final newProps = getWidgetPropsFromUrl(urlPath);
+            setState(() {
+              this.newProps = newProps;
+              this.newPath = newPath;
+            });
+            controller.loadFile(
+                assetFilePath: WebViewConstants.widgetAssetsPath);
+          } else {
+            final newProps = getWidgetPropsFromUrl(urlPath);
+            setState(() {
+              this.newProps = newProps;
+            });
+            controller.loadFile(
+                assetFilePath: WebViewConstants.widgetAssetsPath);
+          }
+
+          return;
+        } else {
+          if (urlPath == WebViewConstants.widgetWebviewUrl) {
+            await updateViewerWithNewParams(
+              webViewController: controller,
+              path: newPath,
+              props: newProps,
+            );
+            return;
+          }
+          if (urlPath.contains("/widget/")) {
+            final newPath = extractPath(urlPath);
+            final newProps = getWidgetPropsFromUrl(urlPath);
+            setState(() {
+              this.newProps = newProps;
+              this.newPath = newPath;
+            });
+            controller.loadUrl(
+              urlRequest: URLRequest(
+                url: WebUri(WebViewConstants.widgetWebviewUrl),
+              ),
+            );
+          } else {
+            final newProps = getWidgetPropsFromUrl(urlPath);
+            setState(() {
+              this.newProps = newProps;
+            });
+            controller.loadUrl(
+              urlRequest: URLRequest(
+                url: WebUri(WebViewConstants.widgetWebviewUrl),
+              ),
+            );
+          }
+        }
+      },
+      onUpdateVisitedHistory: (controller, url, androidIsReload) {},
+      onLoadError: (controller, url, code, message) {
+        controller.reload();
+      },
+      onConsoleMessage: (controller, consoleMessage) {
+        if (consoleMessage.messageLevel == ConsoleMessageLevel.ERROR) {
+          widget.onError?.call(consoleMessage.message);
+        }
+        if (kDebugMode) {
+          print(consoleMessage);
+        }
+      },
     );
   }
 }

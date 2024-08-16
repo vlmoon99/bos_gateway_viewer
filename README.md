@@ -23,6 +23,10 @@ To make it work properly on the Web platform, you need to add the `web_support.j
 </head>
 ```  
 
+### Installation - Android support
+
+To make it work properly on the Android platform, you need to add android:usesCleartextTraffic="true" to manifest
+
 ### Installation - iOS support
 
 To make it work properly on the iOS platform, you need to add the NSAllowsLocalNetworking key with true in the Info.plist :
