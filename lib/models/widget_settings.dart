@@ -6,6 +6,6 @@ class WidgetSettings {
   final String widgetProps;
   const WidgetSettings({
     required this.widgetSrc,
-    this.widgetProps = "{}",
+    this.widgetProps = """'{}'""",
   });
 }
