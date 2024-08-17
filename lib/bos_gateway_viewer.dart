@@ -226,9 +226,6 @@ class _BosGatewayWidgetState extends State<BosGatewayWidget> {
         if (consoleMessage.messageLevel == ConsoleMessageLevel.ERROR) {
           widget.onError?.call(consoleMessage.message);
         }
-        if (kDebugMode) {
-          print(consoleMessage);
-        }
       },
     );
   }
