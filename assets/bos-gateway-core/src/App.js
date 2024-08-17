@@ -39,8 +39,8 @@ function App(props) {
   const { network, widgetSrc, widgetProps, privateKey, accountId } = props;
   const anonymousWidget = !privateKey || !accountId;
 
-  console.log("NEAR objects will be initialized");
-  console.log(JSON.stringify(props));
+  // console.log("NEAR objects will be initialized");
+  // console.log(JSON.stringify(props));
 
   const { initNear } = useInitNear();
   const near = useNear();
