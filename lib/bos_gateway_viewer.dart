@@ -7,7 +7,6 @@ import 'dart:developer';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_inappwebview/flutter_inappwebview.dart';
-import 'package:bos_gateway_viewer/services/localStorageCleaner/models/local_storage_cleaner.dart';
 import 'package:bos_gateway_viewer/services/localStorageCleaner/unimplemented_ls_cleaner.dart'
     if (dart.library.io) 'package:bos_gateway_viewer/services/localStorageCleaner/mobile_ls_cleaner.dart'
     if (dart.library.js) 'package:bos_gateway_viewer/services/localStorageCleaner/web_ls_cleaner.dart';
@@ -124,13 +123,15 @@ class _BosGatewayWidgetState extends State<BosGatewayWidget> {
       await _localhostServer.start();
     }
 
-    final LocalStorageCleaner localStorageCleanerManager =
-        localStorageCleaner();
-    await localStorageCleanerManager.clear();
-
     if (!kIsWeb && defaultTargetPlatform == TargetPlatform.android) {
       await InAppWebViewController.setWebContentsDebuggingEnabled(kDebugMode);
     }
+  }
+
+  @override
+  void dispose() {
+    localStorageCleaner().clear();
+    super.dispose();
   }
 
   @override

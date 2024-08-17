@@ -1,5 +1,6 @@
 import 'package:bos_gateway_viewer/bos_gateway_viewer.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -149,6 +150,13 @@ class _HomeScreenState extends State<HomeScreen> {
                 ),
               ),
               const SizedBox(height: 15),
+              // ElevatedButton(
+              //   onPressed: () async {
+              //     const secureStorage = FlutterSecureStorage();
+              //     secureStorage.write(key: "key-near", value: "value");
+              //   },
+              //   child: const Text("Set test data"),
+              // ),
               if (!generateFucntionalKeyLoading)
                 ElevatedButton(
                   onPressed: () async {
