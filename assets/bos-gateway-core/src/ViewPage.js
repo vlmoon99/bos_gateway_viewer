@@ -23,7 +23,7 @@ export default function ViewPage(props) {
   const location = useLocation();
 
   useEffect(() => {
-    console.log("URL changed to:", window.location.href);
+    // console.log("URL changed to:", window.location.href);
 
     const params = new URLSearchParams(window.location.search);
     const newWidgetProps = { ...props.widgetProps };

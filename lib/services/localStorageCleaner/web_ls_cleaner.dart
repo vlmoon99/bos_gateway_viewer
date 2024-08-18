@@ -9,7 +9,7 @@ class WebLocalStorageCleaner implements LocalStorageCleaner {
     const String clearFunction = '''
         for (let i = localStorage.length - 1; i >= 0; i--) {
           const key = localStorage.key(i);
-          if (key.includes("near")) {
+          if (key.startsWith("near")) {
             localStorage.removeItem(key);
           }
         }

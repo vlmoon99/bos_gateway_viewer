@@ -39,8 +39,8 @@ function App(props) {
   const { network, widgetSrc, widgetProps, privateKey, accountId } = props;
   const anonymousWidget = !privateKey || !accountId;
 
-  console.log("NEAR objects will be initialized");
-  console.log(JSON.stringify(props));
+  // console.log("NEAR objects will be initialized");
+  // console.log(JSON.stringify(props));
 
   const { initNear } = useInitNear();
   const near = useNear();
@@ -61,7 +61,12 @@ function App(props) {
   useEffect(() => {
     const myKeyStore = new nearAPI.keyStores.BrowserLocalStorageKeyStore();
     async function setData() {
-      ls.clear();
+      for (let i = localStorage.length - 1; i >= 0; i--) {
+        const key = localStorage.key(i);
+        if (key.startsWith("near")) {
+          localStorage.removeItem(key);
+        }
+      }
       const keyPair = nearAPI.KeyPair.fromString(privateKey);
       await myKeyStore.setKey(network, accountId, keyPair);
       Object.entries(WalletSelectorDefaultValues).forEach(([key, value]) => {
