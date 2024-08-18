@@ -10,3 +10,11 @@
 ## 0.0.3
 
 * FIX bugs
+  
+## 0.0.4
+
+* Add web support
+
+## 0.0.5
+
+* Fix local storage for web
