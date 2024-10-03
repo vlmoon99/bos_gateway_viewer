@@ -1,34 +1,25 @@
 name: bos_gateway_viewer
 description: "viewer for bos-gateway-core"
 version: 0.0.5
-homepage:
+homepage: null
 
 environment:
-  sdk: '>=3.2.3 <4.0.0'
+  sdk: '>=3.5.0 <4.0.0'
 
 dependencies:
   flutter:
     sdk: flutter
-  flutter_inappwebview: ^6.0.0
-
-dependency_overrides:
-  flutter_inappwebview_web:
-    git:
-      url: https://github.com/p-mazhnik/flutter_inappwebview.git
-      path: flutter_inappwebview_web
-      ref: 295ff82
+  flutter_inappwebview: ^6.1.4
 
 dev_dependencies:
+  flutter_lints: ^2.0.0
   flutter_test:
     sdk: flutter
-  flutter_lints: ^2.0.0
 
 # For information on the generic Dart part of this file, see the
 # following page: https://dart.dev/tools/pub/pubspec
-
 # The following section is specific to Flutter packages.
 flutter:
-
   # To add assets to your package, add an assets section, like this:
   assets:
     - assets/bos-gateway-core/dist/
@@ -39,7 +30,6 @@ flutter:
   #
   # An image asset can refer to one or more resolution-specific "variants", see
   # https://flutter.dev/assets-and-images/#resolution-aware
-
   # To add custom fonts to your package, add a fonts section here,
   # in this "flutter" section. Each entry in this list should have a
   # "family" key with the font family name, and a "fonts" key with a

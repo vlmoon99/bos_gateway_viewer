@@ -2,8 +2,8 @@ Viewer for bos-gateway-core
 
 ## Requirements
 
-- Dart sdk: ">=2.17.0 <4.0.0"
-- Flutter: ">=3.0.0"
+- Dart sdk: ">=3.5.0"
+- Flutter: ">=3.24.0"
 - Android: `minSdkVersion >= 19`, `compileSdk >= 34`, [AGP](https://developer.android.com/build/releases/gradle-plugin) version `>= 7.3.0` (use [Android Studio - Android Gradle plugin Upgrade Assistant](https://developer.android.com/build/agp-upgrade-assistant) for help), support for `androidx` (see [AndroidX Migration](https://flutter.dev/docs/development/androidx-migration) to migrate an existing app)
 - iOS 9.0+: `--ios-language swift`, Xcode version `>= 14.3`
 
