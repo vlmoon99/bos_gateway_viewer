@@ -1,6 +1,6 @@
 name: bos_gateway_viewer
 description: "viewer for bos-gateway-core"
-version: 0.0.5
+version: 0.0.6
 homepage: null
 
 environment:
