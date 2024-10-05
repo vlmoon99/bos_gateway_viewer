@@ -36,13 +36,6 @@ dependencies:
   flutter_inappwebview: ^6.0.0
   flutter_secure_storage: ^9.2.2
 
-dependency_overrides:
-  flutter_inappwebview_web:
-    git:
-      url: https://github.com/p-mazhnik/flutter_inappwebview.git
-      path: flutter_inappwebview_web
-      ref: evaluate-js-demo
-
 dev_dependencies:
   # The "flutter_lints" package below contains a set of recommended lints to
   # encourage good coding practices. The lint set provided by the package is
