@@ -21,14 +21,14 @@ const WalletSelectorAuthKey = "near_app_wallet_auth_key";
 const getNetworkPreset = (networkId) => ({
   mainnet: {
     networkId,
-    nodeUrl: "https://rpc.fastnear.com",
+    nodeUrl: "https://free.rpc.fastnear.com",
     helperUrl: "https://helper.mainnet.near.org",
     explorerUrl: "https://nearblocks.io",
     indexerUrl: "https://api.kitwallet.app",
   },
   testnet: {
     networkId,
-    nodeUrl: "https://rpc.testnet.near.org",
+    nodeUrl: "https://test.rpc.fastnear.com",
     helperUrl: "https://helper.testnet.near.org",
     explorerUrl: "https://testnet.nearblocks.io",
     indexerUrl: "https://testnet-api.kitwallet.app",
